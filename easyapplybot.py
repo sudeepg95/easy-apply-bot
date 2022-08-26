@@ -145,6 +145,7 @@ class EasyApplyBot:
         # self.browser.set_window_size(0, 0)
         # self.browser.set_window_position(2000, 2000)
         self.browser.maximize_window()
+        self.browser.set_window_position(0, 0)
 
     def start_apply(self, positions, locations):
         start = time.time()
@@ -286,6 +287,7 @@ class EasyApplyBot:
 
                         self.write_to_file(
                             button, jobID, self.browser.title, result)
+
                         self.avoid_lock()
                         # sleep every 20 applications
                         if count_application != 0 and count_application % 20 == 0:
@@ -529,7 +531,9 @@ class EasyApplyBot:
         pyautogui.press('esc')
 
     def next_jobs_page(self, position, location, jobs_per_page):
-        JObURL = "https://www.linkedin.com/jobs/search/?f_LF=f_AL&keywords=" + str(urllib.parse.quote(position)) + \
+        jobs_added_since="2592000" # Past Month: 2592000, Past Week: 604800, Past 24 hrs: 86400
+
+        JObURL = "https://www.linkedin.com/jobs/search/?f_TPR=r" + jobs_added_since + "&f_LF=f_AL&keywords=" + str(urllib.parse.quote(position)) + \
             location + "&start=" + str(jobs_per_page)+"&refresh=true&sortBy=DD"
         if self.remote == True:
             JObURL = JObURL+"&f_WT=2"

@@ -150,3 +150,4 @@ states.json
 logs
 config.yaml
 
+.DS_Store
