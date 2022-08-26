@@ -126,10 +126,10 @@ class EasyApplyBot:
         self.browser.get(
             "https://www.linkedin.com/login?trk=guest_homepage-basic_nav-header-signin")
         try:
-            user_field = self.browser.find_element(By.ID, "username")
-            pw_field = self.browser.find_element(By.ID, "password")
-            login_button = self.browser.find_element(By.CSS_SELECTOR,
-                                                     ".btn__primary--large")
+            user_field = self.browser.find_element(By.ID,"username")
+            pw_field = self.browser.find_element(By.ID,"password")
+            login_button = self.browser.find_element(By.XPATH,
+                        '//*[@id="organic-div"]/form/div[3]/button')
             user_field.send_keys(username)
             user_field.send_keys(Keys.TAB)
             time.sleep(2)
@@ -142,10 +142,8 @@ class EasyApplyBot:
                 "TimeoutException! Username/password field or login button not found")
 
     def fill_data(self):
-        # self.browser.set_window_size(0, 0)
-        # self.browser.set_window_position(2000, 2000)
         self.browser.maximize_window()
-        self.browser.set_window_position(0, 0)
+        self.browser.set_window_size(1, 1)
 
     def start_apply(self, positions, locations):
         start = time.time()
@@ -175,7 +173,7 @@ class EasyApplyBot:
 
         log.info("Looking for jobs.. Please wait..")
 
-        self.browser.set_window_position(0, 0)
+        self.browser.set_window_position(1, 1)
         self.browser.maximize_window()
         self.browser, _ = self.next_jobs_page(
             position, location, jobs_per_page)
@@ -215,9 +213,10 @@ class EasyApplyBot:
                 # get job ID of each job link
                 IDs = []
                 for link in links:
+                    # './/a[@data-control-id]'
                     children = link.find_elements(By.XPATH,
-                                                  './/a[@data-control-id]'
-                                                  )
+                        './/a[@data-control-name]'
+                    )
                     for child in children:
                         if child.text not in self.blacklist:
                             temp = link.get_attribute("data-job-id")
@@ -368,12 +367,15 @@ class EasyApplyBot:
 
     def get_easy_apply_button(self):
         try:
+            # '//button[contains(@class, "jobs-apply")]/span[1]'
             button = self.browser.find_elements(By.XPATH,
-                                                '//button[contains(@class, "jobs-apply")]/span[1]'
-                                                )
+                '//button[contains(@class, "jobs-apply-button")]'
+            )
 
             EasyApplyButton = button[0]
-        except:
+            
+        except Exception as e: 
+            print("Exception:",e)
             EasyApplyButton = False
 
         return EasyApplyButton
